@@ -1,0 +1,22 @@
+{
+  "name": "beds",
+  "version": "1.0.0",
+  "description": "testing desktop app",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kenanigansatwork/beds.git"
+  },
+  "keywords": [
+    "electron"
+  ],
+  "author": "Kenneth Dait",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kenanigansatwork/beds/issues"
+  },
+  "homepage": "https://github.com/kenanigansatwork/beds#readme"
+}
