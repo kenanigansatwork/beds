@@ -7,7 +7,7 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 
-const {app, BrowserWindow, Menu} = electron;
+const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let mainWindow,
     addWindow;
@@ -15,7 +15,13 @@ let mainWindow,
 // Listen for app to be ready
 app.on('ready', function(){
   // create new window
-  mainWindow = new BrowserWindow({});
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      enableRemoteModule: true,
+      nodeIntegration: true,
+      contextIsolation: true
+    }
+  });
   // load html file into window
   let mainURL = url.format({
     pathname: path.join(__dirname, 'mainWindow.html'),
@@ -41,7 +47,12 @@ function createAddWindow() {
   addWindow = new BrowserWindow({
     width: 300,
     height: 200,
-    title: "Add Shopping List Item"
+    title: "Add Shopping List Item",
+    webPreferences: {
+      enableRemoteModule: true,
+      nodeIntegration: true,
+      contextIsolation: true
+    }
   });
   // load html file into window
   let addURL = url.format({
@@ -54,6 +65,14 @@ function createAddWindow() {
     addWindow = null;
   });
 }
+
+// catch item:add
+ipcMain.on('item:add', function(e, item){
+  // send to mainWindow
+  console.log(item);
+  mainWindow.webContents.send('item:add', item);
+  addWindow.close();
+});
 
 // create menu template (an array of objects)
 const mainMenuTemplate = [
