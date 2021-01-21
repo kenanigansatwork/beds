@@ -9,7 +9,51 @@ const path = require('path');
 
 const {app, BrowserWindow, Menu} = electron;
 
-let mainWindow;
+let mainWindow,
+    addWindow;
+
+// Listen for app to be ready
+app.on('ready', function(){
+  // create new window
+  mainWindow = new BrowserWindow({});
+  // load html file into window
+  let mainURL = url.format({
+    pathname: path.join(__dirname, 'mainWindow.html'),
+    protocol: 'file:',
+    slashes: true
+  });
+  mainWindow.loadURL(mainURL);
+
+  // quit app when closed
+  mainWindow.on('closed', function(){
+    app.quit();
+  });
+
+  // build menu from template
+  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+  // insert menu
+  Menu.setApplicationMenu(mainMenu);
+});
+
+// handle creation of the Add window
+function createAddWindow() {
+  // create new window
+  addWindow = new BrowserWindow({
+    width: 300,
+    height: 200,
+    title: "Add Shopping List Item"
+  });
+  // load html file into window
+  let addURL = url.format({
+    pathname: path.join(__dirname, 'addWindow.html'),
+    protocol: 'file:',
+    slashes: true
+  });
+  addWindow.loadURL(addURL);
+  addWindow.on('close', function(){
+    addWindow = null;
+  });
+}
 
 // create menu template (an array of objects)
 const mainMenuTemplate = [
@@ -17,7 +61,10 @@ const mainMenuTemplate = [
     label: 'File',
     submenu: [
       {
-        label: 'Add Item'
+        label: 'Add Item',
+        click() {
+          createAddWindow();
+        }
       },
       {
         label: 'Clear Items'
@@ -33,20 +80,26 @@ const mainMenuTemplate = [
   }
 ];
 
-// Listen for app to be ready
-app.on('ready', function(){
-  // create new window
-  mainWindow = new BrowserWindow({});
-  // load html file into window
-  let mainURL = url.format({
-    pathname: path.join(__dirname, 'mainWindow.html'),
-    protocol: 'file:',
-    slashes: true
-  });
-  mainWindow.loadURL(mainURL);
+// if mac, add empty object to mainMenuTemplate
+if (process.platform == 'darwin') {
+  mainMenuTemplate.unshift({}); // adds empty object to beginning of array
+}
 
-  // build menu from template
-  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-  // insert menu
-  Menu.setApplicationMenu(mainMenu);
-});
+// add dev tools item if not in production
+if(process.env.NODE_ENV !== 'production') {
+  mainMenuTemplate.push({
+    label: 'DevTools',
+    submenu: [
+      {
+        label: 'Toggle DevTools',
+        accelerator: process.platform == 'darwin' ? 'Command+I':'Ctrl+I',
+        click(item, focusedWindow){
+          focusedWindow.toggleDevTools();
+        }
+      },
+      {
+        role: 'reload'
+      }
+    ]
+  })
+}
