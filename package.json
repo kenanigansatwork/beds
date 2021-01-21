@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/kenanigansatwork/beds/issues"
   },
-  "homepage": "https://github.com/kenanigansatwork/beds#readme"
+  "homepage": "https://github.com/kenanigansatwork/beds#readme",
+  "dependencies": {
+    "electron": "^11.2.0"
+  }
 }
